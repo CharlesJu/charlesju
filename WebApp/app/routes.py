@@ -34,7 +34,7 @@ def hospitals():
 
 @app.route('/testGraphs', methods=['GET'])
 def testGraphs():
-    return render_template('analytics/testGraphs.html')
+    return render_template('testGraphs.html')
 
 
 # *****************************************************************************
