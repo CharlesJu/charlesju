@@ -2,27 +2,53 @@ from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, forms, utils
 from app.models import Hospital, Info
-
+from datetime import datetime
 
 # *****************************************************************************
 # *                                  ROUTES                                   *
 # *****************************************************************************
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 # @login_required
 def index():
+    info = Info.query.all()[-1]
     if request.method == 'POST':
         data = request.get_json()
-
         utils.print_to_stderr(data)
+
+
+        newInfo = Info(hospital=info.hospital,
+                       time=datetime.now(),
+                       total_num_beds=info.total_num_beds,
+                       used_num_beds=info.used_num_beds,
+                       total_num_vent=info.total_num_vent,
+                       used_num_vent=info.used_num_vent,
+                       num_adm=info.num_adm,
+                       used_dis=info.used_dis)
+
+        if data['chosenOperation'] == "Add":
+            newInfo.add(data['chosenResource'], data['requestedAmount'])
+        elif data['chosenOperation'] == "Remove":
+            newInfo.remove(data['chosenResource'], data['requestedAmount'])
+        elif data['chosenOperation'] == "Patient(s) In":
+            newInfo.patient_in(data['chosenResource'], data['requestedAmount'])
+        elif data['chosenOperation'] == "Patient(s) Out":
+            newInfo.patient_out(data['chosenResource'], data['requestedAmount'])
+        utils.print_to_stderr(newInfo)
+        db.session.add(newInfo)
+        db.session.commit()
+        return data
+    else:
+        utils.print_to_stderr(info)
+        data = {
+            'availBeds': info.total_num_beds - info.used_num_beds,
+            'totalBeds': info.total_num_beds,
+            'totalVents': info.total_num_vent,
+            'availVents': info.total_num_vent - info.used_num_vent
+        }
         return jsonify(data)
-    # return jsonify("")
-
-    # return redirect(url_for('testGraphs'))
-    return render_template('tracker/index.html', title='index')
-
 
 @app.route('/edit-info', methods=['GET', 'POST'])
 def edit_info():

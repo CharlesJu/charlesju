@@ -18,30 +18,29 @@ class Info(db.Model):
     def __repr__(self):
         return '<Hospital Info for {}>'.format(self.hospital)
 
-    def beds_add(self, num_beds):
-        self.total_num_beds = self.total_num_beds + num_beds
+    def add(self, item, n):
+        if item == "Beds":
+            self.total_num_beds = self.total_num_beds + n
+        elif item == "Ventilators":
+            self.total_num_vent = self.total_num_vent + n
 
-    def beds_remove(self, num_beds):
-        self.total_num_beds = self.total_num_beds - num_beds
+    def remove(self, item, n):
+        if item == "Beds":
+            self.total_num_beds = self.total_num_beds - n
+        elif item == "Ventilators":
+            self.total_num_vent = self.total_num_vent - n
 
-    def vents_add(self, num_vents):
-        self.total_num_vent = self.total_num_vent + num_vents
+    def patient_in(self, item, n):
+        if item == "Beds":
+            self.used_num_beds = self.used_num_beds + n
+        elif item == "Ventilators":
+            self.used_num_vent = self.used_num_vent + n
 
-    def vents_remove(self, num_vents):
-        self.total_num_vent = self.total_num_vent - num_vents
-
-    def beds_patient_in(self, num_patients):
-        self.used_num_beds = self.used_num_beds + num_patients
-
-    def beds_patient_out(self, num_patients):
-        self.used_num_beds = self.used_num_beds - num_patients
-
-    def vents_patient_in(self, num_patients):
-        self.used_num_vent = self.used_num_vent + num_patients
-
-    def vents_patient_out(self, num_patients):
-        self.used_num_vent = self.used_num_vent - num_patients
-
+    def patient_out(self, item, n):
+        if item == "Beds":
+            self.used_num_beds = self.used_num_beds - n
+        elif item == "Ventilators":
+            self.used_num_vent = self.used_num_vent - n
 
 class Hospital(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
