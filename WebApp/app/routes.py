@@ -1,0 +1,74 @@
+from flask import Flask, render_template, redirect, url_for, flash
+from flask_login import login_user, logout_user, current_user, login_required
+from app import app, db, forms
+from app.models import Hospital, Info
+
+
+# *****************************************************************************
+# *                                  ROUTES                                   *
+# *****************************************************************************
+
+
+@app.route('/')
+@app.route('/index')
+@login_required
+def index():
+  return render_template('tracker/index.html', title='index')
+
+@app.route('/edit-info', methods=['GET', 'POST'])
+def edit_info():
+  return render_template('edit_info.html')
+
+@app.route('/hospitals', methods=['GET'])
+def hospitals():
+  return render_template('tracker/hospitals.html')
+
+@app.route('/stats', methods=['GET'])
+def stats():
+  return render_template('stats.html')
+
+
+# *****************************************************************************
+# *                               User Handling                               *
+# *****************************************************************************
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+  if current_user.is_authenticated:
+      return redirect(url_for('index'))
+
+  form = forms.LoginForm()
+  if form.validate_on_submit():
+    hospital = Hospital.query.filter_by(hospital_id=form.hospital_id.data).first()
+
+    if hospital is None or not hospital.check_password(form.password.data):
+      flash("Invalid username or password")
+
+    login_user(hospital, remember=form.remember.data)
+
+    return redirect(url_for('index'))
+    
+
+  return render_template('auth/login.html', title='Sign In', form=form)
+  
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+  if current_user.is_authenticated:
+    return redirect(url_for('index'))
+  
+  form = forms.RegistrationForm()
+
+  if form.validate_on_submit():
+    hospital = Hospital(hospital_id=form.hospital_id.data,    hospital_name=form.hospital_name.data)
+    hospital.set_password(form.password.data)
+    db.session.add(hospital)
+    db.session.commit()
+    return redirect(url_for('login'))
+
+  return render_template('auth/register.html', title='Register', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))

@@ -1,0 +1,12 @@
+
+.idea
+
+WebApp/__pycache__/
+
+*.db
+
+WebApp/app/__pycache__/
+
+WebApp/flask_session/
+
+WebApp/migrations/
