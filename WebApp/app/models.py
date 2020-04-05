@@ -1,12 +1,13 @@
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_login import UserMixin
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Info(db.Model):
-  hospital = db.Column(db.String(64), primary_key=True)
+  id = db.Column(db.Integer, primary_key=True)
+  hospital = db.Column(db.String(64))
   time = db.Column(db.DateTime)
   total_num_beds = db.Column(db.Integer)
   used_num_beds = db.Column(db.Integer)
@@ -19,8 +20,9 @@ class Info(db.Model):
     return '<Hospital Info for {}>'.format(self.hospital)
 
 
-class Hospital(db.Model):
-  username = db.Column(db.Integer, primary_key=True)
+class Hospital(UserMixin, db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  username = db.Column(db.String(64), index=True, unique=True)
   hospital_name = db.Column(db.String(64), index=True, unique=True)
   email = db.Column(db.String(120), index=True, unique=True)
   password_hash = db.Column(db.String(128))
