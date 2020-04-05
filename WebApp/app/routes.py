@@ -23,9 +23,9 @@ def edit_info():
 def hospitals():
   return render_template('tracker/hospitals.html')
 
-@app.route('/stats', methods=['GET'])
-def stats():
-  return render_template('stats.html')
+@app.route('/testGraphs', methods=['GET'])
+def testGraphs():
+  return render_template('testGraphs.html')
 
 
 # *****************************************************************************
