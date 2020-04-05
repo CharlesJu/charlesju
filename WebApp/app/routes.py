@@ -40,7 +40,7 @@ def login():
 
   form = forms.LoginForm()
   if form.validate_on_submit():
-    hospital = Hospital.query.filter_by(hospital_id=form.hospital_id.data).first()
+    hospital = Hospital.query.filter_by(username=form.username.data).first()
 
     if hospital is None or not hospital.check_password(form.password.data):
       flash("Invalid username or password")
@@ -60,7 +60,7 @@ def register():
   form = forms.RegistrationForm()
 
   if form.validate_on_submit():
-    hospital = Hospital(hospital_id=form.hospital_id.data,    hospital_name=form.hospital_name.data)
+    hospital = Hospital(username=form.username.data,    hospital_name=form.hospital_name.data)
     hospital.set_password(form.password.data)
     db.session.add(hospital)
     db.session.commit()
