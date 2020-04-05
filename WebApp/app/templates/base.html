@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - Hospital Tracker</title>
+        {% else %}
+        <title>Hospital Tracker</title>
+        {% endif %}
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>
