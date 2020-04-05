@@ -110,26 +110,23 @@ def plotScatterplot():
 
   # LSR Line Calculation
   m, y_intercept = linreg('used_num_beds')
-  slope = m[0]
-
+  slope = m[1]
+    
   # earliest time with recorded data for MY_HOSPITAL
   temp_df.sort_values(by=['date'])
   earliest = temp_df.at[0, 'date']
   earliest = '{} 00:00:00'.format(earliest)
-  earliest = datetime_to_epoch(earliest)
   ourLine.at[earliest, "x_values"] = earliest
   #feed earliet date into LSRL
-  ourLine.at[earliest, "y_values"] = (earliest * slope) + y_intercept
+  ourLine.at[earliest, "y_values"] = (datetime_to_epoch(earliest) * slope) + y_intercept
 
-
+  
   # do the same with latest time with recorded data for MY_HOSPITAL
-  temp_df.sort_values(by=['date'], ascending = False)
-  latest = temp_df.at[0, 'date']
+  latest = temp_df.at[(len(temp_df['date']) - 1)*3, 'date']
   latest = '{} 00:00:00'.format(latest)
-  latest = datetime_to_epoch(latest)
   ourLine.at[latest, "x_values"] = latest
   #feed latest date into LSRL
-  ourLine.at[latest, "y_values"] = (latest * slope) + y_intercept
+  ourLine.at[latest, "y_values"] = (datetime_to_epoch(latest) * slope) + y_intercept
 
   #plotting LSRL
   scatterplot.add_trace(go.Scatter(x = ourLine["x_values"], y = ourLine["y_values"], mode = 'lines+markers', name = 'LSRL'))
@@ -141,7 +138,7 @@ def plotScatterplot():
       yaxis_title="Number of Beds Occupied",
     )
 
-  scatterplot.write_html("testGraphs.html")
+  scatterplot.write_html("./webapp/app/templates/testGraphs.html")
 
 plotScatterplot()
 
