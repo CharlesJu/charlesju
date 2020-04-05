@@ -3,9 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_session import Session
+from flask_cors import  CORS
 from config import Config
 
 app = Flask(__name__)
+CORS(app)
 app.config.from_object(Config)
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'

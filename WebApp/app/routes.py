@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, forms, utils
 from app.models import Hospital, Info
@@ -11,12 +11,14 @@ from app.models import Hospital, Info
 
 @app.route('/')
 @app.route('/index')
-@login_required
+# @login_required
 def index():
     if request.method == 'POST':
         data = request.get_json()
 
         utils.print_to_stderr(data)
+        return jsonify(data)
+    # return jsonify("")
 
     # return redirect(url_for('testGraphs'))
     return render_template('tracker/index.html', title='index')
